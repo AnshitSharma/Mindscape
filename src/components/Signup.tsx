@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Router, useLocation, useNavigate } from "react-router-dom";
 
 import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+
 
 function Signup() {
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const signupSchema = z.object({
     name: z
       .string()
@@ -42,12 +45,23 @@ function Signup() {
     },
   });
 
-  
 
-  const handleSignup = async (userData: z.infer<typeof signupSchema>) => {
-   
-    console.log(userData);
-    
+
+  const handleSignup = async ({name, username, email, password}: z.infer<typeof signupSchema>) => {
+   setIsLoading(true);
+    try {
+      // const userData = {name, username, email, password};
+      // console.log(userData);
+      // const user = createUser(userData);
+
+      // if(user) navigate(`/patients/${user.id}/signup`);
+
+
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -119,6 +133,7 @@ function Signup() {
               )}
             />
             <Button type="submit" disabled={isLoading}>
+
               {isLoading ? (
                 <div className="flex items-center gap-x-2">
                   <LoaderCircle size={20} className="animate-spin" />

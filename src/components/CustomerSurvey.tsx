@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { CheckCircle, XCircle } from "lucide-react";
 
 interface Question {
   id: number;
@@ -146,9 +147,12 @@ const CustomerSurvey = () => {
 
       {totalScore !== null && (
         <div className="mt-6 p-4 bg-green-100 rounded-lg">
-          <p className="text-lg font-semibold dark:text-black">
-            Total Score: {totalScore}
-          </p>
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="text-green-500" size={24} />
+            <p className="text-lg font-semibold dark:text-black">
+              Total Score: {totalScore}
+            </p>
+          </div>
         </div>
       )}
     </div>
