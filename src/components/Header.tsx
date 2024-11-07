@@ -19,6 +19,7 @@ function Header() {
     { text: "Contact Us", path: "/contactus" },
     { text: "SignUp", path: "/signup" },
     { text: " SignIn", path: "/signin" },
+    { text: "Make an Appointment", path: "" },
   ];
   return (
     <div className=" border-b-2 shadow fixed z-50 bg-background top-0 left-0 right-0 ">

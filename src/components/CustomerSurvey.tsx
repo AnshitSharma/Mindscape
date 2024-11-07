@@ -93,7 +93,7 @@ const CustomerSurvey = () => {
   return (
     <div className="max-w-4xl mx-auto p-10 bg-white rounded-lg shadow-md mt-32 dark:bg-gray-900">
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-2xl font-bold">CUSTOMER SURVEY</h1>
+        <h1 className="text-2xl font-bold">Stress Assessment </h1>
         <Button
           onClick={handleReturnHome}
           className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
@@ -102,8 +102,7 @@ const CustomerSurvey = () => {
         </Button>
       </div>
       <p className="mb-6 font-semibold">
-        Thank you for connecting with us! Please take a few minutes to rate us
-        so we can serve you better.
+        Thank you for connecting with us! 
       </p>
 
       {questions.map((question) => (

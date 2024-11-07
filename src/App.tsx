@@ -1,11 +1,6 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-import Header from "./components/Header";
-import Landing from "./components/Landing";
-import Testimonials from "./components/Testimonials";
-import Copyright from "./components/Copyright";
-import Footer from "./components/Footer";
-import Contact from "./components/Contact";
+
 import SurveySection from "./components/SurveySection";
 import CustomerSurvey from "./components/CustomerSurvey";
 
@@ -28,6 +23,7 @@ function App() {
         <Route path="stress-survey" element={<CustomerSurvey />} />
         <Route path="anxiety-survey" element={<AnxietyLevel />} />
         <Route path="contactus" element={<Contactus />} />
+  
       </Route>
     </Routes>
   );
