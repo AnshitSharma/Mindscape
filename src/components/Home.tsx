@@ -11,8 +11,9 @@ export default function Home() {
 <div className="w-full min-h-screen font-rubik overflow-x-hidden overflow-y-auto">
    
         <Landing />
-        <Testimonials />
         <SurveySection />
+        <Testimonials />
+    
   
    
        

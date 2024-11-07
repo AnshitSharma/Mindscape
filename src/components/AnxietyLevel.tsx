@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import SurveyResults from "./SurveyResults";
+import AnxietyResults from "./AnxietyResults";
 
 interface Question {
   id: number;
@@ -9,85 +10,104 @@ interface Question {
   score: number;
 }
 
-const CustomerSurvey = () => {
+
+const AnxietyLevel = () => {
   const navigate = useNavigate();
+  
+ 
   const [questions, setQuestions] = useState<Question[]>([
     {
       id: 1,
-      text: "Do you feel that you are punished without any crime?",
+      text: "Do you want to run away to some distant place having got tired of your problems?",
       score: 0,
     },
     {
       id: 2,
-      text: "Do you lose the balance of your mind even under ordinary pressure of circumstances?",
+      text: "Do you generally commit such errors which are difficult to correct?",
       score: 0,
     },
-    { id: 3, text: "Do you generally have unsteady mind?", score: 0 },
+    {
+      id: 3,
+      text: "Do you think that you have committed certain error because of which you are very restless?",
+      score: 0,
+    },
     {
       id: 4,
-      text: "Do you generally stutter while taking to strangers?",
+      text: "Are you afraid of going to high places?",
       score: 0,
     },
     {
       id: 5,
-      text: "Do you sometimes feel that your life is useless?",
+      text: "Do you generally feel physical weakness?",
       score: 0,
     },
-    { id: 6, text: "Do you weep very easily?", score: 0 },
+    {
+      id: 6,
+      text: "Do you generally think that life will remain sad?",
+      score: 0,
+    },
     {
       id: 7,
-      text: "Do you generally have the conflict of sin and righteousness in your mind?",
+      text: "Do you shed tears at the time of your troubles by the little sympathy of others?",
       score: 0,
     },
     {
       id: 8,
-      text: "Do you get very much excited of the just rememberance of the bitter experiences of your life?",
+      text: "Do you generally feel that you are helpless?",
       score: 0,
     },
     {
       id: 9,
-      text: "Do you generally feel that you would lose your presence of mind?",
+      text: "Do you generally get lost in yourself?",
       score: 0,
     },
     {
       id: 10,
-      text: "Do you feel so scared that your tongue gets dried up?",
+      text: "Do you generally work under the condition of strain?",
       score: 0,
     },
     {
       id: 11,
-      text: "Do you think yourself to be the sinner without any reason?",
+      text: "Do you generally remain in anxiety?",
       score: 0,
     },
     {
       id: 12,
-      text: "Do you constantly have the strain in your nervous system?",
+      text: "Do you generally have mental tensions?",
       score: 0,
     },
     {
       id: 13,
-      text: "Do you occasionally have fear while going out that you may miss your train?",
+      text: "Do you generally feel suffocation because of fear?",
       score: 0,
     },
-    { id: 14, text: "Do you feel the lack of sleep?", score: 0 },
+    {
+      id: 14,
+      text: "Do you become very sad by the contradiction of your own statement?",
+      score: 0,
+    },
     {
       id: 15,
-      text: "Do you always get yourself busy in some work or other just to forget your problems?",
+      text: "Do you feel that your life is in dark?",
       score: 0,
     },
   ]);
 
   const [totalScore, setTotalScore] = useState<number | null>(null);
+
   const handleScoreChange = (id: number, score: number) => {
     setQuestions(questions.map((q) => (q.id === id ? { ...q, score } : q)));
   };
+
   const handleSubmit = () => {
     const score = questions.reduce((sum, q) => sum + q.score, 0);
     setTotalScore(score);
   };
+
   const handleReturnHome = () => {
     navigate('/');
   };
+
   const isAllQuestionsAnswered = questions.every((q) => q.score !== 0);
 
   return (
@@ -141,12 +161,10 @@ const CustomerSurvey = () => {
       </Button>
 
       {totalScore !== null && (
-        <SurveyResults totalScore={totalScore} />
+        <AnxietyResults totalScore={totalScore} />
       )}
-    
     </div>
-
   );
 };
 
-export default CustomerSurvey;
+export default AnxietyLevel;

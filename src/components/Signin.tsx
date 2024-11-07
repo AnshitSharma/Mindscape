@@ -97,7 +97,7 @@ function Signin() {
           </form>
         </Form>
         <div className="flex items-center gap-x-1 mx-auto text-xs xsm:text-sm">
-          <div>New to CodeBliss?</div>
+          <div>New to Mindscape?</div>
           <Link to="/signup" className="text-primary">
             Sign up
           </Link>

@@ -9,12 +9,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 
 import { Link, Router, useLocation, useNavigate } from "react-router-dom";
 
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import { createUser } from "@/lib/actions/patients.action";
 
 
 function Signup() {
@@ -23,47 +25,52 @@ function Signup() {
   const signupSchema = z.object({
     name: z
       .string()
-      .min(3, { message: "Your name must be atleast 3 characters long." })
-      .max(32, { message: "Your name cannot exceed 32 characters." }),
-    username: z
-      .string()
-      .min(3, { message: "Username must be atleast 3 characters long." })
-      .max(32, { message: "Username cannot exceed 32 characters." }),
+      .min(3, { message: "Your name must be at least 3 characters long." })
+      .max(32, { message: "Your name cannot exceed 32 characters." }),  
     email: z
       .string()
       .email({ message: "Please provide a valid email address." }),
     password: z.string()
+      .min(8, { message: "Password must be at least 8 characters long." })
+      .max(32, { message: "Password cannot exceed 32 characters." }),
+    phone: z.string()
+      .regex(/^\+?[1-9]\d{1,14}$/, { message: "Phone number must start with '+' and contain up to 15 digits." })
   });
+  
 
   const signupForm = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
-      username: "",
+      phone: "",
       email: "",
       password: "",
+
     },
   });
 
 
 
-  const handleSignup = async ({name, username, email, password}: z.infer<typeof signupSchema>) => {
-   setIsLoading(true);
+  const handleSignup = async ({ name, phone, email, password }: z.infer<typeof signupSchema>) => {
+    setIsLoading(true);
     try {
-      // const userData = {name, username, email, password};
-      // console.log(userData);
-      // const user = createUser(userData);
 
-      // if(user) navigate(`/patients/${user.id}/signup`);
-
-
+      const formattedPhone = phone.startsWith("+") ? phone : `+1${phone}`;
+      const userData = { name, email, password, phone: formattedPhone };
+      console.log(userData);
+  
+      const user = await createUser(userData);
+      console.log(user);
+      if (user) {
+        navigate("/signin");
+      }
     } catch (error) {
       console.log(error);
     }
-
+  
     setIsLoading(false);
   };
-
+  
   return (
     <div
       className={`w-11/12 max-w-7xl min-h-[calc(100vh-68px)] mx-auto flex justify-center items-center pt-4 pb-6`}
@@ -73,7 +80,7 @@ function Signup() {
           Sign up 👨‍💻
         </div>
         <div className="text-sm opacity-80">
-          Join CodeBliss today and start creating amazing frontend projects!
+      
         </div>
         <Form {...signupForm}>
           <form
@@ -94,11 +101,11 @@ function Signup() {
             />
             <FormField
               control={signupForm.control}
-              name="username"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Create a username" {...field} />
+                    <Input placeholder="Enter your phone number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
