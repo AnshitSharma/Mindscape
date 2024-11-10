@@ -11,9 +11,8 @@ function Copyright() {
   return (
     <>
       <div
-        className={`bottom-9 right-0  shadow-md rounded-t-lg transition-all fixed duration-300 ease-in-out ${
-          iframeMinimized ? 'h-14 w-1/2' : 'h-[430px] w-1/2'
-        }`}
+        className={`bottom-9 right-0  shadow-md rounded-t-lg transition-all fixed duration-300 ease-in-out ${iframeMinimized ? 'h-14 w-1/2' : 'h-[430px] w-1/2'
+          }`}
       >
         {iframeMinimized ? (
           <Button
@@ -37,12 +36,7 @@ function Copyright() {
         )}
         {!iframeMinimized && (
           <div className="flex justify-end h-full">
-            <iframe
-              width="100%"
-              height="100%"
-              allow="microphone;"
-              src="https://console.dialogflow.com/api-client/demo/embedded/6b65996b-538b-418c-b855-caf0228bac17"
-            />
+            <iframe width="50%" height="100%" allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/d9cafa05-3539-4bde-875e-e96f4babecbd"></iframe>
           </div>
         )}
       </div>

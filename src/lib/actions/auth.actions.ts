@@ -1,13 +1,13 @@
-import { ID, Query } from "node-appwrite";
+import {  Query } from "node-appwrite";
 import { users } from "../appwrite.config";
 
 declare interface SignInParams {
   email: string;
   password: string;
+  age: string;
 }
 
-
-export const signInUser = async (credentials: SignInParams) => {
+    export const  signInUser = async (credentials: SignInParams) => {
   try {
     // First check if user exists
     const existingUsers = await users.list([

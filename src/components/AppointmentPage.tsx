@@ -26,16 +26,38 @@ import {
 import { Star } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import * as z from "zod";
+import { toast } from "sonner";
 
 // Define interfaces and types
+interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+}
+
 interface Appointment {
   id: number;
   title: string;
-  date: Date;
+  date: string;
   timeSlot: string;
+  doctorId: string;
+  doctorName: string;
   isStarred: boolean;
+  userName: string;
+  userEmail: string;
 }
+
+const doctors: Doctor[] = [
+  { id: "1", name: "Dr. Sarah Smith", specialty: "General Physician" },
+  { id: "2", name: "Dr. John Doe", specialty: "Cardiologist" },
+  { id: "3", name: "Dr. Emily Johnson", specialty: "Pediatrician" },
+  { id: "4", name: "Dr. Michael Chen", specialty: "Dermatologist" },
+  { id: "5", name: "Dr. Lisa Wilson", specialty: "Neurologist" },
+];
 
 const timeSlots: string[] = [
   "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
@@ -43,7 +65,7 @@ const timeSlots: string[] = [
   "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM",
 ];
 
-// Define the form schema with proper types
+// Updated form schema to include user details
 const formSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   date: z.date({
@@ -52,30 +74,101 @@ const formSchema = z.object({
   timeSlot: z.string({
     required_error: "Please select a time slot.",
   }),
+  doctorId: z.string({
+    required_error: "Please select a doctor.",
+  }),
+  userName: z.string().min(2, "Name is required"),
+  userEmail: z.string().email("Invalid email address"),
 });
 
-// Infer the form types from the schema
 type FormValues = z.infer<typeof formSchema>;
 
 const AppointmentPage: React.FC = () => {
+
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/signin");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       date: undefined,
       timeSlot: "",
+      doctorId: "",
+      userName: "",
+      userEmail: "",
     },
   });
 
-  const onSubmit = (data: FormValues): void => {
-    const newAppointment: Appointment = {
+  const onSubmit = async (data: FormValues): Promise<void> => {
+    const selectedDoctor = doctors.find((doctor) => doctor.id === data.doctorId);
+    
+    const appointmentData: Appointment = {
       id: Date.now(),
-      ...data,
+      title: data.title,
+      date: data.date.toISOString(),
+      timeSlot: data.timeSlot,
+      doctorId: data.doctorId,
+      doctorName: selectedDoctor?.name || "",
       isStarred: false,
+      userName: data.userName,
+      userEmail: data.userEmail,
     };
-    setAppointments([...appointments, newAppointment]);
+
+    try {
+      setLoading(true);
+
+      // Create message for Web3Forms
+      const messageContent = `
+        New Appointment Booking:
+        Patient Name: ${data.userName}
+        Appointment Title: ${data.title}
+        Date: ${data.date.toLocaleDateString()}
+        Time: ${data.timeSlot}
+        Doctor: ${selectedDoctor?.name} (${selectedDoctor?.specialty})
+      `;
+
+      // Send to Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "208927e5-a309-4ef7-8b5b-1c4cde85bc5e", 
+          name: data.userName,
+          email: data.userEmail,
+          message: messageContent,
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast.success(  "Appointment booked successfully!");
+        setAppointments((prev) => [...prev, appointmentData]);
+      } else {
+        throw new Error("Failed to submit appointment");
+      }
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      toast.error("Failed to book appointment. Please try again.");
+      } finally {
+      setLoading(false);
+    }
   };
 
   const toggleStar = (appointmentId: number): void => {
@@ -88,7 +181,7 @@ const AppointmentPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="max-w-4xl mx-auto p-6 space-y-8 mt-28">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Add Appointment</CardTitle>
@@ -100,6 +193,34 @@ const AppointmentPage: React.FC = () => {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <FormField
                     control={form.control}
+                    name="userName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="userEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your email" type="email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="title"
                     render={({ field }) => (
                       <FormItem>
@@ -107,6 +228,31 @@ const AppointmentPage: React.FC = () => {
                         <FormControl>
                           <Input placeholder="Appointment title" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="doctorId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Doctor</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a doctor" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {doctors.map((doctor) => (
+                              <SelectItem key={doctor.id} value={doctor.id}>
+                                {doctor.name} - {doctor.specialty}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -157,8 +303,8 @@ const AppointmentPage: React.FC = () => {
                     )}
                   />
                   
-                  <Button type="submit" className="w-full">
-                    Add Appointment
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Booking..." : "Add Appointment"}
                   </Button>
                 </form>
               </Form>
@@ -166,7 +312,7 @@ const AppointmentPage: React.FC = () => {
             
             <div className="flex items-center justify-center">
               <img
-                src="/api/placeholder/400/320"
+                src="/src/assets/doctorApp.png"
                 alt="Appointment illustration"
                 className="max-w-full h-auto"
               />
@@ -197,7 +343,13 @@ const AppointmentPage: React.FC = () => {
                 <div>
                   <h3 className="font-medium">{appointment.title}</h3>
                   <p className="text-sm text-gray-500">
-                    {appointment.date.toLocaleDateString()} at {appointment.timeSlot}
+                    {new Date(appointment.date).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Doctor: {appointment.doctorName}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Patient: {appointment.userName}
                   </p>
                 </div>
                 <Button

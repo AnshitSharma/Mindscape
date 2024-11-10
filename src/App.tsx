@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import { AuthProvider } from "@/context/AuthContext";
 
 import SurveySection from "./components/SurveySection";
 import CustomerSurvey from "./components/CustomerSurvey";
@@ -16,6 +16,7 @@ import AppointmentPage from "./components/AppointmentPage";
 
 function App() {
   return (
+    <AuthProvider> 
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route path="" element={<Home />} />
@@ -28,6 +29,7 @@ function App() {
         <Route path="appointment" element={<AppointmentPage />} />
       </Route>
     </Routes>
+    </AuthProvider>
   );
 }
 
