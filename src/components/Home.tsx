@@ -2,6 +2,7 @@
 import Landing from './Landing'
 import Testimonials from './Testimonials'
 import SurveySection from './SurveySection'
+import Contactus from './Contactus'
 
 
 
@@ -12,8 +13,9 @@ export default function Home() {
    
         <Landing />
         <SurveySection />
+      
         <Testimonials />
-    
+    <Contactus/>
   
    
        

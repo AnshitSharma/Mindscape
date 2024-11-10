@@ -10,32 +10,60 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+import { signInUser } from "@/lib/actions/auth.actions";
 
 function Signin() {
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const signinSchema = z.object({
-    identifier: z.string().refine((identifier) => identifier.trim() !== "", {
-      message: "Please provide your username or email address.",
-    }),
-    password: z.string().refine((password) => password.trim() !== "", {
-      message: "Please provide your password.",
-    }),
+    email: z
+      .string()
+      .email({ message: "Please provide a valid email address." }),
+    password: z.string().min(1, { message: "Please provide your password." }),
   });
 
   const signinForm = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      identifier: "",
+      email: "",
       password: "",
     },
   });
 
-  const handleSignin = async (
-    userCredentials: z.infer<typeof signinSchema>
-  ) => {};
+  const handleSignin = async ({ 
+    email, 
+    password 
+  }: z.infer<typeof signinSchema>) => {
+    setIsLoading(true);
+    try {
+      const user = await signInUser({ email, password });
+      
+      if (user) {
+        // Redirect to dashboard or home page after successful login
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      if (error.message === "User not found") {
+        signinForm.setError("email", {
+          message: "No account found with this email"
+        });
+      } else if (error.message === "Invalid credentials") {
+        signinForm.setError("password", {
+          message: "Invalid password"
+        });
+      } else {
+        signinForm.setError("root", {
+          message: "An error occurred during sign in"
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -55,12 +83,12 @@ function Signin() {
           >
             <FormField
               control={signinForm.control}
-              name="identifier"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Enter your username or email address"
+                      placeholder="Enter your email address"
                       {...field}
                     />
                   </FormControl>
@@ -84,6 +112,11 @@ function Signin() {
                 </FormItem>
               )}
             />
+            {signinForm.formState.errors.root && (
+              <div className="text-red-500 text-sm">
+                {signinForm.formState.errors.root.message}
+              </div>
+            )}
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <div className="flex items-center gap-x-2">

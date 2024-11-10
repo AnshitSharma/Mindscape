@@ -11,6 +11,8 @@ import Home from "./components/Home";
 
 import Contactus from "./components/Contactus";
 import AnxietyLevel from "./components/AnxietyLevel";
+import AppointmentPage from "./components/AppointmentPage";
+
 
 function App() {
   return (
@@ -23,7 +25,7 @@ function App() {
         <Route path="stress-survey" element={<CustomerSurvey />} />
         <Route path="anxiety-survey" element={<AnxietyLevel />} />
         <Route path="contactus" element={<Contactus />} />
-  
+        <Route path="appointment" element={<AppointmentPage />} />
       </Route>
     </Routes>
   );

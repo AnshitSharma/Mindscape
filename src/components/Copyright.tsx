@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 function Copyright() {
   const [iframeMinimized, setIframeMinimized] = useState(true);
@@ -8,11 +8,11 @@ function Copyright() {
     setIframeMinimized(!iframeMinimized);
   };
 
-  return (<>
-
-   <div
-        className={`absolute bottom-9 left-0 right-0 bg-white dark:bg-gray-900 shadow-md rounded-t-lg transition-all duration-300 ease-in-out w-auto  ${
-          iframeMinimized ? 'h-14' : 'h-[430px]'
+  return (
+    <>
+      <div
+        className={`bottom-9 right-0  shadow-md rounded-t-lg transition-all fixed duration-300 ease-in-out ${
+          iframeMinimized ? 'h-14 w-1/2' : 'h-[430px] w-1/2'
         }`}
       >
         {iframeMinimized ? (
@@ -37,12 +37,12 @@ function Copyright() {
         )}
         {!iframeMinimized && (
           <div className="flex justify-end h-full">
-          <iframe
-            width="50%"
-            height="100%"
-            allow="microphone;"
-            src="https://console.dialogflow.com/api-client/demo/embedded/766f7b5e-9e4f-42d9-963e-7664dc3026dd"
-          />
+            <iframe
+              width="100%"
+              height="100%"
+              allow="microphone;"
+              src="https://console.dialogflow.com/api-client/demo/embedded/6b65996b-538b-418c-b855-caf0228bac17"
+            />
           </div>
         )}
       </div>
@@ -52,10 +52,8 @@ function Copyright() {
       <div className="bg-black text-white text-xs dark:text-black dark:text-sm dark:bg-slate-400 text-center fixed z-50 bg-background bottom-0 left-0 right-0 py-2">
         © 2024 Delhi, (C,A,R) Inc All rights reserved
       </div>
-  
-
     </>
-  )
+  );
 }
 
-export default Copyright
+export default Copyright;
