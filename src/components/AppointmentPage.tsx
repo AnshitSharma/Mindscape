@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import doctorApp from "../assets/doctorApp.png";
 import {
   Card,
   CardContent,
@@ -312,7 +313,7 @@ const AppointmentPage: React.FC = () => {
             
             <div className="flex items-center justify-center">
               <img
-                src="src/assets/doctorApp.png"
+                src={doctorApp}
                 alt="Appointment illustration"
                 className="max-w-full h-auto"
               />
