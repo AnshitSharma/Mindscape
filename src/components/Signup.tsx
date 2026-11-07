@@ -17,11 +17,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { createUser } from "@/lib/actions/patients.action";
+import { useAuth } from "@/context/AuthContext";
 
 
 function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
   const signupSchema = z.object({
     name: z
       .string()
@@ -56,19 +58,23 @@ function Signup() {
     try {
 
       const formattedPhone = phone.startsWith("+") ? phone : `+1${phone}`;
-      const userData = { name, email, password, phone: formattedPhone };
-      console.log(userData);
-  
-      const user = await createUser(userData);
-      console.log(user);
-      if (user) {
-        navigate("/signin");
-      }
+      await createUser({ name, email, password, phone: formattedPhone });
+      login();
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      const message = error instanceof Error ? error.message : "";
+      if (message === "Account exists") {
+        signupForm.setError("email", {
+          message: "An account with this email already exists. Please sign in.",
+        });
+      } else {
+        signupForm.setError("root", {
+          message: "An error occurred during sign up",
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
-  
-    setIsLoading(false);
   };
   
   return (
@@ -139,6 +145,12 @@ function Signup() {
                 </FormItem>
               )}
             />
+            {signupForm.formState.errors.root && (
+              <div className="text-red-500 text-sm">
+                {signupForm.formState.errors.root.message}
+              </div>
+            )}
+
             <Button type="submit" disabled={isLoading}>
 
               {isLoading ? (

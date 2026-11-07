@@ -10,15 +10,26 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 function Header() {
-  
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await logout();
+    navigate("/");
+  };
+
   const links = [
-    
     { text: "Contact Us", path: "/contactus" },
-    { text: "SignUp", path: "/signup" },
-    { text: " SignIn", path: "/signin" },
+    ...(isAuthenticated
+      ? []
+      : [
+          { text: "SignUp", path: "/signup" },
+          { text: " SignIn", path: "/signin" },
+        ]),
     { text: "Make an Appointment", path: "/appointment" },
   ];
   return (
@@ -40,6 +51,11 @@ function Header() {
                 <Link to={link.path}> {link.text}</Link>
               </Button>
             ))}
+            {isAuthenticated && (
+              <Button variant={"outline"} onClick={handleSignOut}>
+                Sign out
+              </Button>
+            )}
           </div>
           <div className="md:hidden">
             <Sheet>
@@ -78,6 +94,15 @@ function Header() {
                      <Link to={link.path}> {link.text}</Link>
                     </Button>
                   ))}
+                  {isAuthenticated && (
+                    <Button
+                      className="w-full"
+                      variant={"secondary"}
+                      onClick={handleSignOut}
+                    >
+                      Sign out
+                    </Button>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

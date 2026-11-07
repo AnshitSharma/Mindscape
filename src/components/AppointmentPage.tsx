@@ -88,18 +88,15 @@ const AppointmentPage: React.FC = () => {
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isChecking } = useAuth();
   const navigate = useNavigate();
 
+  // Wait for the stored session check before sending a signed-in user away.
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isChecking && !isAuthenticated) {
       navigate("/signin");
     }
-  }, [isAuthenticated, navigate]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  }, [isAuthenticated, isChecking, navigate]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -112,6 +109,11 @@ const AppointmentPage: React.FC = () => {
       userEmail: "",
     },
   });
+
+  // After all hooks, so the hook order stays the same between renders.
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const onSubmit = async (data: FormValues): Promise<void> => {
     const selectedDoctor = doctors.find((doctor) => doctor.id === data.doctorId);

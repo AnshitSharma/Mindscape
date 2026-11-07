@@ -39,23 +39,22 @@ function Signin() {
 
   const { login } = useAuth();
 
-  // Only extract email and password from form submission
-  const handleSignin = async ({ email, password,age }: { email: string; password: string; age: string }) => {
+  // Only email and password are sent; Appwrite checks the password.
+  const handleSignin = async ({ email, password }: z.infer<typeof signinSchema>) => {
     setIsLoading(true);
     try {
-        const user = await signInUser({ email, password, age: age as string });
-      if (user) {
-        login();
-        navigate("/");
-      }
-    } catch (error: any) {
-      if (error.message === "User not found") {
-        signinForm.setError("email", {
-          message: "No account found with this email",
+      await signInUser({ email, password });
+      login();
+      navigate("/");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message === "Invalid credentials") {
+        signinForm.setError("root", {
+          message: "Incorrect email or password",
         });
-      } else if (error.message === "Invalid credentials") {
-        signinForm.setError("password", {
-          message: "Invalid password",
+      } else if (message === "Too many attempts") {
+        signinForm.setError("root", {
+          message: "Too many sign-in attempts. Please wait a few minutes and try again.",
         });
       } else {
         signinForm.setError("root", {
